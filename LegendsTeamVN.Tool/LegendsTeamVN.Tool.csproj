@@ -11,4 +11,10 @@
     <PackageReference Include="Scriban" Version="7.2.5" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Content Include="Templates\**\*.scriban">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+
 </Project>
