@@ -13,6 +13,7 @@ RUN dotnet publish "LegendsTeamVN.Tool.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
+ENV ASPNETCORE_HTTP_PORTS=8081
 EXPOSE 8081
 
 COPY --from=publish /app/publish .
