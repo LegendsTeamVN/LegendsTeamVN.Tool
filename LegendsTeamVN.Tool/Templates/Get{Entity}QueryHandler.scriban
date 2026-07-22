@@ -1,0 +1,39 @@
+##PATH: Application/Features/{{ entity_name_plural }}/GetList/Get{{ entity_name_plural }}QueryHandler.cs
+using LegendsTeamVN.BadmintonClub.Domain.Entities;
+using LegendsTeamVN.BadmintonClub.Domain.Repositories;
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Responses;
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.Core.Utilities.Results;
+using LegendsTeamVN.Core.Application.Pagination;
+using System.Linq;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetList;
+
+public sealed class Get{{ entity_name_plural }}QueryHandler(I{{ entity_name }}Repository {{ entity_name | string.downcase }}Repository) : IQueryHandler<Get{{ entity_name_plural }}Query, PagedResult<{{ entity_name }}Response>>
+{
+    public async Task<Result<PagedResult<{{ entity_name }}Response>>> Handle(Get{{ entity_name_plural }}Query request, CancellationToken cancellationToken)
+    {
+        var query = {{ entity_name | string.downcase }}Repository.GetQueryable();
+        
+        if (!string.IsNullOrWhiteSpace(request.Request.SearchTerm))
+        {
+            // query = query.Where(x => x.Name.Contains(request.Request.SearchTerm));
+        }
+
+        var totalCount = query.Count();
+        
+        var items = query
+            .Skip((request.Request.PageIndex - 1) * request.Request.PageSize)
+            .Take(request.Request.PageSize)
+            .Select(x => new {{ entity_name }}Response({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}x.{{ column.name }}{{~ end ~}}))
+            .ToList();
+
+        return new PagedResult<{{ entity_name }}Response>(items, totalCount, request.Request.PageIndex, request.Request.PageSize);
+    }
+}

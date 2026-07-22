@@ -1,0 +1,15 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Create/Create{{ entity_name }}CommandValidator.cs
+using FluentValidation;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Create;
+
+public sealed class Create{{ entity_name }}CommandValidator : AbstractValidator<Create{{ entity_name }}Command>
+{
+    public Create{{ entity_name }}CommandValidator()
+    {
+{{~ for column in table.columns ~}}
+{{~ if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end ~}}
+        // RuleFor(x => x.{{ column.name }});
+{{~ end ~}}
+    }
+}

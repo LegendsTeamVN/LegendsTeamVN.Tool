@@ -1,0 +1,17 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Update/Update{{ entity_name }}CommandValidator.cs
+using FluentValidation;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Update;
+
+public sealed class Update{{ entity_name }}CommandValidator : AbstractValidator<Update{{ entity_name }}Command>
+{
+    public Update{{ entity_name }}CommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty().WithMessage("{{ entity_name }} ID is required.");
+
+{{~ for column in table.columns ~}}
+{{~ if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end ~}}
+        // RuleFor(x => x.{{ column.name }});
+{{~ end ~}}
+    }
+}

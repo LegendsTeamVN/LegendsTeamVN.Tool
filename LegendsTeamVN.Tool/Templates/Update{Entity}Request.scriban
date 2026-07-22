@@ -1,0 +1,10 @@
+﻿##PATH: Application/DTOs/{{ entity_name_plural }}/Requests/Update{{ entity_name }}Request.cs
+namespace LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Requests;
+
+public sealed record Update{{ entity_name }}Request({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}{{ column.system_type }} {{ column.name }}{{~ end ~}});

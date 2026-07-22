@@ -1,0 +1,28 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Update/Update{{ entity_name }}CommandHandler.cs
+using LegendsTeamVN.BadmintonClub.Domain.Entities;
+using LegendsTeamVN.BadmintonClub.Domain.Repositories;
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.Core.Utilities.Results;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Update;
+
+public sealed class Update{{ entity_name }}CommandHandler(I{{ entity_name }}Repository {{ entity_name | string.downcase }}Repository) : ICommandHandler<Update{{ entity_name }}Command>
+{
+    public async Task<Result> Handle(Update{{ entity_name }}Command request, CancellationToken cancellationToken)
+    {
+        var {{ entity_name | string.downcase }} = await {{ entity_name | string.downcase }}Repository.FindByIdAsync(request.Id, cancellationToken);
+        if ({{ entity_name | string.downcase }} is null)
+        {
+            return Result.Failure(Error.NotFound("{{ entity_name }}.NotFound", "The {{ entity_name | string.downcase }} was not found."));
+        }
+
+{{~ for column in table.columns ~}}
+{{~ if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end ~}}
+        {{ entity_name | string.downcase }}.{{ column.name }} = request.{{ column.name }};
+{{~ end ~}}
+
+        {{ entity_name | string.downcase }}Repository.Update({{ entity_name | string.downcase }});
+
+        return Result.Success();
+    }
+}

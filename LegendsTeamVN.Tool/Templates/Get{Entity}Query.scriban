@@ -1,0 +1,9 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/GetList/Get{{ entity_name_plural }}Query.cs
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Requests;
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Responses;
+using LegendsTeamVN.Core.Application.Pagination;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetList;
+
+public sealed record Get{{ entity_name_plural }}Query(Get{{ entity_name_plural }}Request Request) : IQuery<PagedResult<{{ entity_name }}Response>>;

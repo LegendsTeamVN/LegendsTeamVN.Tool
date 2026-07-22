@@ -1,0 +1,10 @@
+﻿##PATH: Application/DTOs/{{ entity_name_plural }}/Responses/{{ entity_name }}Response.cs
+namespace LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Responses;
+
+public sealed record {{ entity_name }}Response({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}{{ column.system_type }} {{ column.name }}{{~ end ~}});

@@ -1,0 +1,12 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Create/Create{{ entity_name }}Command.cs
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Create;
+
+public sealed record Create{{ entity_name }}Command({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}{{ column.system_type }} {{ column.name }}{{~ end ~}}) : ICommand<Guid>;

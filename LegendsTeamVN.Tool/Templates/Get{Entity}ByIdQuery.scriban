@@ -1,0 +1,8 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/GetById/Get{{ entity_name }}ByIdQuery.cs
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Responses;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetById;
+
+public sealed record Get{{ entity_name }}ByIdQuery(Guid Id) : IQuery<{{ entity_name }}Response>;

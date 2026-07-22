@@ -1,0 +1,9 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Update/Update{{ entity_name }}Command.cs
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Update;
+
+public sealed record Update{{ entity_name }}Command(Guid Id{{~ 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+~}}, {{ column.system_type }} {{ column.name }}{{~ end ~}}) : ICommand;

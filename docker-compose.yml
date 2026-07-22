@@ -1,0 +1,10 @@
+version: '3.8'
+services:
+  web:
+    image: ${API_IMAGE}
+    container_name: legends-team-vn-tool
+    restart: unless-stopped
+    ports:
+      - '8081:8081'
+    environment:
+      - ConnectionStrings__DefaultConnection=${DB_CONNECTION_STRING}

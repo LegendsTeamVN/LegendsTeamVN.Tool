@@ -1,0 +1,23 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Delete/Delete{{ entity_name }}CommandHandler.cs
+using LegendsTeamVN.BadmintonClub.Domain.Entities;
+using LegendsTeamVN.BadmintonClub.Domain.Repositories;
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.Core.Utilities.Results;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Delete;
+
+public sealed class Delete{{ entity_name }}CommandHandler(I{{ entity_name }}Repository {{ entity_name | string.downcase }}Repository) : ICommandHandler<Delete{{ entity_name }}Command>
+{
+    public async Task<Result> Handle(Delete{{ entity_name }}Command request, CancellationToken cancellationToken)
+    {
+        var {{ entity_name | string.downcase }} = await {{ entity_name | string.downcase }}Repository.FindByIdAsync(request.Id, cancellationToken);
+        if ({{ entity_name | string.downcase }} is null)
+        {
+            return Result.Failure(Error.NotFound("{{ entity_name }}.NotFound", "The {{ entity_name | string.downcase }} was not found."));
+        }
+
+        {{ entity_name | string.downcase }}Repository.Delete({{ entity_name | string.downcase }});
+
+        return Result.Success();
+    }
+}

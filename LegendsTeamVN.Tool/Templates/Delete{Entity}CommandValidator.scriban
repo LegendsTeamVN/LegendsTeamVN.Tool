@@ -1,0 +1,12 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Delete/Delete{{ entity_name }}CommandValidator.cs
+using FluentValidation;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Delete;
+
+public sealed class Delete{{ entity_name }}CommandValidator : AbstractValidator<Delete{{ entity_name }}Command>
+{
+    public Delete{{ entity_name }}CommandValidator()
+    {
+        RuleFor(x => x.Id).NotEmpty().WithMessage("{{ entity_name }} ID is required.");
+    }
+}

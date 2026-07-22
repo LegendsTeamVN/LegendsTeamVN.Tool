@@ -1,0 +1,6 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Delete/Delete{{ entity_name }}Command.cs
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Delete;
+
+public sealed record Delete{{ entity_name }}Command(Guid Id) : ICommand;

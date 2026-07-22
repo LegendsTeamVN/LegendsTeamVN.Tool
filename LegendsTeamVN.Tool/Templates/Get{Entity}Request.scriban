@@ -1,0 +1,6 @@
+﻿##PATH: Application/DTOs/{{ entity_name_plural }}/Requests/Get{{ entity_name_plural }}Request.cs
+using LegendsTeamVN.Core.Application.Pagination;
+
+namespace LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Requests;
+
+public sealed record Get{{ entity_name_plural }}Request : SearchFilter;

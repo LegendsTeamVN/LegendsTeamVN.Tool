@@ -1,0 +1,28 @@
+##PATH: Application/Features/{{ entity_name_plural }}/GetById/Get{{ entity_name }}ByIdQueryHandler.cs
+using LegendsTeamVN.BadmintonClub.Domain.Entities;
+using LegendsTeamVN.BadmintonClub.Domain.Repositories;
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Responses;
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.Core.Utilities.Results;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetById;
+
+public sealed class Get{{ entity_name }}ByIdQueryHandler(I{{ entity_name }}Repository {{ entity_name | string.downcase }}Repository) : IQueryHandler<Get{{ entity_name }}ByIdQuery, {{ entity_name }}Response>
+{
+    public async Task<Result<{{ entity_name }}Response>> Handle(Get{{ entity_name }}ByIdQuery request, CancellationToken cancellationToken)
+    {
+        var {{ entity_name | string.downcase }} = await {{ entity_name | string.downcase }}Repository.FindByIdAsync(request.Id, cancellationToken);
+        if ({{ entity_name | string.downcase }} is null)
+        {
+            return Result.Failure<{{ entity_name }}Response>(Error.NotFound("{{ entity_name }}.NotFound", "The {{ entity_name | string.downcase }} was not found."));
+        }
+
+        return new {{ entity_name }}Response({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}{{ entity_name | string.downcase }}.{{ column.name }}{{~ end ~}});
+    }
+}

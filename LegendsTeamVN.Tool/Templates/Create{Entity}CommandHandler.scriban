@@ -1,0 +1,32 @@
+﻿##PATH: Application/Features/{{ entity_name_plural }}/Create/Create{{ entity_name }}CommandHandler.cs
+using LegendsTeamVN.BadmintonClub.Domain.Entities;
+using LegendsTeamVN.BadmintonClub.Domain.Repositories;
+using LegendsTeamVN.Core.Application.Messaging.CQRS;
+using LegendsTeamVN.Core.Utilities.Results;
+
+namespace LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Create;
+
+public sealed class Create{{ entity_name }}CommandHandler(I{{ entity_name }}Repository {{ entity_name | string.downcase }}Repository) : ICommandHandler<Create{{ entity_name }}Command, Guid>
+{
+    public async Task<Result<Guid>> Handle(Create{{ entity_name }}Command request, CancellationToken cancellationToken)
+    {
+        // Example check
+        // var existing{{ entity_name }} = await {{ entity_name | string.downcase }}Repository.FindSingleAsync(c => c.Name == request.Name, cancellationToken);
+        // if (existing{{ entity_name }} is not null)
+        // {
+        //     return Result.Failure<Guid>(Error.Conflict("{{ entity_name }}.NameExists", "A {{ entity_name | string.downcase }} with this name already exists."));
+        // }
+
+        var {{ entity_name | string.downcase }} = new {{ entity_name }}({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}request.{{ column.name }}{{~ end ~}});
+
+        {{ entity_name | string.downcase }}Repository.Add({{ entity_name | string.downcase }});
+
+        return {{ entity_name | string.downcase }}.Id;
+    }
+}

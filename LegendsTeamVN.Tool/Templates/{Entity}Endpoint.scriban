@@ -1,0 +1,109 @@
+##PATH: Presentation/Endpoints/{{ entity_name }}Endpoint.cs
+using LegendsTeamVN.BadmintonClub.Application.DTOs.{{ entity_name_plural }}.Requests;
+using LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Create;
+using LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Delete;
+using LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetById;
+using LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.GetList;
+using LegendsTeamVN.BadmintonClub.Application.Features.{{ entity_name_plural }}.Update;
+using LegendsTeamVN.Core.Identity.Authorization;
+using LegendsTeamVN.Core.Presentation.Abstractions;
+using LegendsTeamVN.Core.Presentation.Extensions;
+
+using MediatR;
+
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.AspNetCore.Routing;
+
+namespace LegendsTeamVN.BadmintonClub.Presentation.Endpoints;
+
+public class {{ entity_name }}Endpoint : EndpointGroupBase
+{
+    protected override string Name => "{{ entity_name | string.downcase }}s";
+
+    protected override void Map(RouteGroupBuilder group)
+    {
+        group.MapPost("", Create{{ entity_name }})
+             .WithName("Create{{ entity_name }}")
+             .WithSummary("Creates a new {{ entity_name | string.downcase }}")
+             .WithDescription("Creates a new {{ entity_name | string.downcase }} and returns the created ID.")
+             .RequirePermission("{{ entity_name_plural }}.Create");
+
+        group.MapGet("", Get{{ entity_name_plural }})
+             .WithName("Get{{ entity_name_plural }}")
+             .WithSummary("Gets all {{ entity_name | string.downcase }}s with pagination")
+             .WithDescription("Retrieves a paged list of all {{ entity_name | string.downcase }}s based on filter criteria.")
+             .RequirePermission("{{ entity_name_plural }}.Read");
+
+        group.MapGet("{id:guid}", Get{{ entity_name }}ById)
+             .WithName("Get{{ entity_name }}ById")
+             .WithSummary("Gets a {{ entity_name | string.downcase }} by ID")
+             .WithDescription("Retrieves the details of a specific {{ entity_name | string.downcase }} by its ID.")
+             .RequirePermission("{{ entity_name_plural }}.Read");
+
+        group.MapPut("{id:guid}", Update{{ entity_name }})
+             .WithName("Update{{ entity_name }}")
+             .WithSummary("Updates a {{ entity_name | string.downcase }}")
+             .WithDescription("Updates the details of an existing {{ entity_name | string.downcase }}.")
+             .RequirePermission("{{ entity_name_plural }}.Update");
+
+        group.MapDelete("{id:guid}", Delete{{ entity_name }})
+             .WithName("Delete{{ entity_name }}")
+             .WithSummary("Deletes a {{ entity_name | string.downcase }}")
+             .WithDescription("Deletes an existing {{ entity_name | string.downcase }} by its ID.")
+             .RequirePermission("{{ entity_name_plural }}.Delete");
+    }
+
+    private static async Task<IResult> Get{{ entity_name_plural }}([AsParameters] Get{{ entity_name_plural }}Request request, ISender sender)
+    {
+        var result = await sender.Send(new Get{{ entity_name_plural }}Query(request));
+        return result.Match(
+            onSuccess: responses => Results.Ok(responses)
+        );
+    }
+
+    private static async Task<IResult> Get{{ entity_name }}ById([FromRoute]Guid id, ISender sender)
+    {
+        var result = await sender.Send(new Get{{ entity_name }}ByIdQuery(id));
+        return result.Match(
+            onSuccess: response => Results.Ok(response)
+        );
+    }
+
+    private static async Task<IResult> Update{{ entity_name }}([FromRoute]Guid id, [FromBody]Update{{ entity_name }}Request request, ISender sender)
+    {
+        var command = new Update{{ entity_name }}Command(id{{~ 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+~}}, request.{{ column.name }}{{~ end ~}});
+        var result = await sender.Send(command);
+        return result.Match(
+            onSuccess: () => Results.NoContent()
+        );
+    }
+
+    private static async Task<IResult> Delete{{ entity_name }}([FromRoute]Guid id, ISender sender)
+    {
+        var result = await sender.Send(new Delete{{ entity_name }}Command(id));
+        return result.Match(
+            onSuccess: () => Results.NoContent()
+        );
+    }
+
+    private static async Task<IResult> Create{{ entity_name }}([FromBody]Create{{ entity_name }}Request request, ISender sender)
+    {
+        var command = new Create{{ entity_name }}Command({{~ 
+   first = true 
+   for column in table.columns 
+     if column.name == "Id" || column.name == "CreatedOnUtc" || column.name == "CreatedBy" || column.name == "ModifiedOnUtc" || column.name == "ModifiedBy" || column.name == "DeletedOnUtc" || column.name == "DeletedBy" || column.name == "IsDeleted"; continue; end 
+     if !first; ", "; end
+     first = false
+~}}request.{{ column.name }}{{~ end ~}});
+        var result = await sender.Send(command);
+
+        return result.Match(
+            onSuccess: responseId => Results.CreatedAtRoute("Create{{ entity_name }}", new { id = responseId }, responseId)
+        );
+    }
+}
