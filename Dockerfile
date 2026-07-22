@@ -13,8 +13,7 @@ RUN dotnet publish "LegendsTeamVN.Tool.csproj" -c Release -o /app/publish
 
 FROM mcr.microsoft.com/dotnet/aspnet:10.0 AS final
 WORKDIR /app
-EXPOSE 80
-EXPOSE 443
+EXPOSE 8081
 
 COPY --from=publish /app/publish .
 ENTRYPOINT ["dotnet", "LegendsTeamVN.Tool.dll"]
